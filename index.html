@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang='zh-CN'>
+
+<head>
+    <meta charset='utf-8'>
+    <!-- 让ie  使用 edge 来渲染页面-->
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <!-- 视口 可以根据需求 添加一些 选项 -->
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <!--<meta name='viewport' content='width=device-width, initial-scale=1'>-->
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>聊天时刻</title>
+    <!-- Bootstrap -->
+    <link href='lib/css/bootstrap.min.css' rel='stylesheet'>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        html,
+        body {
+            height: 100%;
+        }
+        
+        .my_panel {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin: 0;
+        }
+        
+        .panel-footer input {
+            width: 100%;
+        }
+        
+        .panel-heading {
+            flex: 1;
+            display: flex;
+            align-items: center;
+        }
+        
+        .panel-heading h3 {}
+        
+        .main {
+            flex: 20;
+            overflow-y: scroll;
+        }
+        
+        .main-con {}
+        
+        .panel-footer {
+            flex: 2;
+            /*padding-top: 0;
+            padding-bottom: 0;*/
+        }
+        
+        img {
+            width: 50px;
+            height: 50px;
+        }
+        
+        .media .self {
+            text-align: right;
+        }
+        
+        .media h4 {
+            font-size: 16px;
+            color: yellowgreen;
+        }
+        
+        .my_content {
+            height: 30px;
+            border: 1px solid #000;
+            border-color: yellowgreen;
+            margin-bottom: 5px;
+        }
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--  html5shiv  html5新语义标签 兼容性 -->
+    <!--[if lt IE 9]><script src='https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js'></script><script src='https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js'></script><![endif]-->
+</head>
+
+<body>
+    <div class="my_panel panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">正在和弦动我心聊天..</h3>
+        </div>
+        <div class="main panel-body">
+            <div class="main-con">
+                <div class="chat media " style="display:none">
+                    <div class="media-left">
+                        <a href="#">
+                            <img class="media-object" src="images/my.jpg" alt="...">
+                        </a>
+                    </div>
+                    <div class="media-body">
+                        <h4 class="media-heading">弦动我心</h4>
+                        <p>你好啊</p>
+                    </div>
+                </div>
+                <div class="self media " style="display:none">
+                    <div class="self media-body">
+                        <h4 class="media-heading">我</h4>
+                        <p>你好</p>
+                    </div>
+                    <div class="media-right">
+                        <a href="#">
+                            <img class="media-object" src="images/you.jpg" alt="...">
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+        <div class="panel-footer">
+            <input class="my_content" type="text" placeholder="请输入内容">
+            <input class="send btn btn-success" type="button" value="发送">
+        </div>
+
+    </div>
+</body>
+
+</html>
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src='lib/js/jquery-1.12.2.js'></script>
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src='lib/js/bootstrap.min.js'></script>
+<script>
+    $(function() {
+        var $heightBefore = $(".main").height();
+        // console.log($heightBefore);
+        $(".send").click(function() {
+            if ($(".my_content").val()) {
+                var $cloneSelf = $(".self").first().clone();
+                $cloneSelf.find("p").html($(".my_content").val());
+                $cloneSelf.show();
+                $cloneSelf.appendTo($(".main-con"));
+
+                var $height = $(".main-con").height()
+                    // console.log($height);
+                var $h = ($height - $heightBefore) > 0 ? ($height - $heightBefore) : 0;
+                $(".main").scrollTop($h);
+                //ajax请求
+                var xhr = new XMLHttpRequest();
+                //请求行
+                xhr.open('post', 'http://www.tuling123.com/openapi/api');
+                xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhr.onload = function() {
+                    // console.log(xhr.responseText);
+                    var text = JSON.parse(xhr.responseText).text;
+                    // console.log(text);
+                    var $cloneChat = $(".chat").first().clone();
+                    $cloneChat.find("p").html(text);
+                    // $cloneChat.find("p").html("Nihao ");
+                    $cloneChat.show();
+                    $cloneChat.appendTo($(".main-con"));
+                    $(".main").scrollTop('auto');
+                    var $height = $(".main-con").height()
+                        // console.log($height);
+                    var $h = ($height - $heightBefore) > 0 ? ($height - $heightBefore) : 0;
+                    $(".main").scrollTop($h);
+                }
+                xhr.send('key=eadc9fc78e234afcb24f1bbd0b0bb819&info=' + $(".my_content").val());
+                console.log($(".my_content").val());
+                $(".my_content").val("");
+            }
+        })
+    })
+</script>
